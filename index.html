@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELS – English Through Reading</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-title-group">
+        <div class="logo-circle">ELS</div>
+        <div>
+          <h1 class="app-title">English Language Studies</h1>
+          <p class="app-subtitle">ENGLISH THROUGH READING – Interactive Edition</p>
+        </div>
+      </div>
+      <button id="homeButton" class="home-button" type="button">
+        Library
+      </button>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <!-- HOME / LIBRARY VIEW -->
+    <section id="homeView" class="view active-view">
+      <div class="home-hero">
+        <div class="hero-text">
+          <h2>English Through Reading – Intermediate</h2>
+          <p>
+            Work through authentic-style reading passages from the
+            <strong>ELS – English Through Reading</strong> series with
+            interactive vocabulary, comprehension, and writing tasks.
+          </p>
+          <p class="hero-note">
+            Start with <strong>Unit 1: The Best Recruiting Agents</strong>.
+            More units can be added later without changing the structure.
+          </p>
+        </div>
+        <div class="hero-card">
+          <div class="book-cover">
+            <div class="book-spotlight"></div>
+            <span class="book-els">ELS</span>
+            <span class="book-tagline">English Language Studies</span>
+            <span class="book-title-main">ENGLISH THROUGH READING</span>
+            <span class="book-author">Inspired by Nesibe Sevgi Öndeş</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="unit-list-section">
+        <h3 class="section-heading">Units</h3>
+        <div id="unitList" class="unit-list">
+          <!-- Filled by JavaScript -->
+        </div>
+      </section>
+    </section>
+
+    <!-- UNIT / LESSON VIEW -->
+    <section id="unitView" class="view">
+      <div class="unit-header">
+        <div>
+          <p class="unit-level" id="unitLevel"></p>
+          <h2 id="unitTitle"></h2>
+        </div>
+        <button id="backToUnits" class="back-button" type="button">
+          ← Back to Units
+        </button>
+      </div>
+
+      <!-- Tab navigation -->
+      <nav class="tab-nav">
+        <button class="tab-button active-tab" data-tab="preReading">Pre-reading</button>
+        <button class="tab-button" data-tab="reading">Reading Text</button>
+        <button class="tab-button" data-tab="vocabulary">Vocabulary</button>
+        <button class="tab-button" data-tab="comprehension">Comprehension</button>
+        <button class="tab-button" data-tab="discussion">Discussion</button>
+        <button class="tab-button" data-tab="writing">Writing</button>
+      </nav>
+
+      <!-- Tab content wrapper -->
+      <div class="tab-content-wrapper">
+        <!-- PRE-READING -->
+        <section id="tab-preReading" class="tab-content active-tab-content">
+          <h3>Pre-reading Questions</h3>
+          <p class="tab-intro">
+            Discuss or think about the questions below before you read the text.
+          </p>
+          <ol id="preReadingList" class="question-list"></ol>
+        </section>
+
+        <!-- READING -->
+        <section id="tab-reading" class="tab-content">
+          <h3>Reading Text</h3>
+          <article id="readingText" class="reading-text"></article>
+        </section>
+
+        <!-- VOCABULARY -->
+        <section id="tab-vocabulary" class="tab-content">
+          <h3>Vocabulary from the Text</h3>
+          <p class="tab-intro">
+            Study these key words and phrases. They will appear in the
+            comprehension and follow-up activities.
+          </p>
+          <div class="vocab-table-wrapper">
+            <table class="vocab-table">
+              <thead>
+                <tr>
+                  <th>Word / Phrase</th>
+                  <th>Part of Speech</th>
+                  <th>Meaning</th>
+                  <th>Example Sentence</th>
+                  <th>Uzbek</th>
+                </tr>
+              </thead>
+              <tbody id="vocabTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- COMPREHENSION / QUIZ -->
+        <section id="tab-comprehension" class="tab-content">
+          <h3>Comprehension Quiz</h3>
+          <p class="tab-intro">
+            Answer the questions based on the reading text. Click
+            <strong>Check Answers</strong> to see your score.
+          </p>
+          <div id="quizContainer" class="quiz-container"></div>
+          <button id="checkQuizButton" class="primary-button" type="button">
+            Check Answers
+          </button>
+          <p id="quizResult" class="quiz-result"></p>
+        </section>
+
+        <!-- DISCUSSION -->
+        <section id="tab-discussion" class="tab-content">
+          <h3>Discussion</h3>
+          <p class="tab-intro">
+            Use these questions for pair work, group work, or individual
+            speaking practice.
+          </p>
+          <ol id="discussionList" class="question-list"></ol>
+        </section>
+
+        <!-- WRITING -->
+        <section id="tab-writing" class="tab-content">
+          <h3>Writing Task</h3>
+          <p id="writingTaskText" class="writing-task-text"></p>
+          <textarea
+            id="writingAnswer"
+            class="writing-area"
+            placeholder="Write your answer here..."
+          ></textarea>
+          <p class="writing-note">
+            You can copy your answer to another document or platform to share
+            with your teacher.
+          </p>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>
+      ELS – English Through Reading • Custom interactive version for classroom use
+    </p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "els-english-through-reading",
+  "version": "1.0.0",
+  "description": "Interactive version of ELS – English Through Reading (Intermediate)",
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "english",
+    "reading",
+    "els",
+    "intermediate",
+    "esl"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {}
+}

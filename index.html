@@ -125,13 +125,20 @@
           <h3>Comprehension Quiz</h3>
           <p class="tab-intro">
             Answer the questions based on the reading text. Click
-            <strong>Check Answers</strong> to see your score.
+            <strong>Check Answers</strong> to see your score. You can also send
+            your result to your teacher via Telegram.
           </p>
           <div id="quizContainer" class="quiz-container"></div>
-          <button id="checkQuizButton" class="primary-button" type="button">
-            Check Answers
-          </button>
+          <div class="button-row">
+            <button id="checkQuizButton" class="primary-button" type="button">
+              Check Answers
+            </button>
+            <button id="sendQuizButton" class="primary-button secondary" type="button">
+              Send Result to Teacher (Telegram)
+            </button>
+          </div>
           <p id="quizResult" class="quiz-result"></p>
+          <p id="quizSendStatus" class="status-message"></p>
         </section>
 
         <!-- DISCUSSION -->
@@ -155,8 +162,14 @@
           ></textarea>
           <p class="writing-note">
             You can copy your answer to another document or platform to share
-            with your teacher.
+            with your teacher, or send it directly via Telegram below.
           </p>
+          <div class="button-row">
+            <button id="sendWritingButton" class="primary-button secondary" type="button">
+              Send Writing to Teacher (Telegram)
+            </button>
+          </div>
+          <p id="writingStatus" class="status-message"></p>
         </section>
       </div>
     </section>

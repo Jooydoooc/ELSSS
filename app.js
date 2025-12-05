@@ -1,6 +1,6 @@
 // ================================
 // ELS – English Through Reading
-// Version 1: Unit 1 only (demo)
+// Version 1: Unit 1 + Telegram submit
 // ================================
 
 // --------- DATA MODEL ----------
@@ -14,8 +14,6 @@ const book = {
       number: 1,
       title: "The Best Recruiting Agents",
       levelLabel: "Unit 1 • Intermediate",
-      // Only the first paragraph is currently used. You can later replace this
-      // with the full text from the book; I will update all files for you.
       readingParagraphs: [
         `In 1849 a servant girl wrote home to her brother from Port Adelaide, South Australia: "I have accepted a situation at £20 per annum, so you can tell the servants in your neighbourhood not to stay in England for such wages as from £4 to £8 a year, but come here." Letters such as these, which were circulated from kitchen to kitchen and from attic to attic in English homes, were the best recruiting agents for the colonies, which were then so desperately in need of young women to serve the pioneers who were trying to create a new life for themselves in their chosen countries. Other girls read about the much better prospects overseas in newspapers and magazines, which also published advertisements giving details of free or assisted passages.`
       ],
@@ -107,7 +105,8 @@ const book = {
             "journeys (for example by ship) to another country that are paid partly or fully by the government or organisation",
           example:
             "Many workers accepted assisted passages to start a new life abroad.",
-          uzbek: "yordamli safar xarajatlari (yo‘l puli qisman yoki to‘liq qoplangan)"
+          uzbek:
+            "yordamli safar xarajatlari (yo‘l puli qisman yoki to‘liq qoplangan)"
         }
       ],
       quiz: [
@@ -187,14 +186,18 @@ const readingTextEl = document.getElementById("readingText");
 const vocabTableBodyEl = document.getElementById("vocabTableBody");
 const quizContainerEl = document.getElementById("quizContainer");
 const quizResultEl = document.getElementById("quizResult");
+const quizSendStatusEl = document.getElementById("quizSendStatus");
 const discussionListEl = document.getElementById("discussionList");
 const writingTaskTextEl = document.getElementById("writingTaskText");
 
 const writingAnswerEl = document.getElementById("writingAnswer");
+const writingStatusEl = document.getElementById("writingStatus");
 
 const homeButton = document.getElementById("homeButton");
 const backToUnitsButton = document.getElementById("backToUnits");
 const checkQuizButton = document.getElementById("checkQuizButton");
+const sendQuizButton = document.getElementById("sendQuizButton");
+const sendWritingButton = document.getElementById("sendWritingButton");
 
 const tabButtons = document.querySelectorAll(".tab-button");
 const tabContents = document.querySelectorAll(".tab-content");
@@ -327,6 +330,9 @@ function openUnit(unitId) {
   // Writing
   writingTaskTextEl.textContent = unit.writingTask;
   writingAnswerEl.value = "";
+  writingStatusEl.textContent = "";
+  quizSendStatusEl.textContent = "";
+  quizResultEl.textContent = "";
 
   // Switch views
   homeView.classList.remove("active-view");
@@ -339,6 +345,7 @@ function openUnit(unitId) {
 function renderQuiz(questions) {
   quizContainerEl.innerHTML = "";
   quizResultEl.textContent = "";
+  quizSendStatusEl.textContent = "";
 
   questions.forEach((q, index) => {
     const wrapper = document.createElement("div");
@@ -395,6 +402,8 @@ function attachEventListeners() {
   });
 
   checkQuizButton.addEventListener("click", handleCheckQuiz);
+  sendQuizButton.addEventListener("click", handleSendQuizToTelegram);
+  sendWritingButton.addEventListener("click", handleSendWritingToTelegram);
 }
 
 function switchToTab(tabName) {
@@ -410,8 +419,9 @@ function switchToTab(tabName) {
   });
 }
 
-function handleCheckQuiz() {
-  if (!currentUnit) return;
+// Quiz scoring helper
+function calculateQuizScore() {
+  if (!currentUnit) return { correct: 0, total: 0, answered: 0 };
 
   const questions = currentUnit.quiz;
   let correctCount = 0;
@@ -431,14 +441,116 @@ function handleCheckQuiz() {
     }
   });
 
-  if (answeredCount === 0) {
+  return { correct: correctCount, total: questions.length, answered: answeredCount };
+}
+
+function handleCheckQuiz() {
+  const { correct, total, answered } = calculateQuizScore();
+
+  if (answered === 0) {
     quizResultEl.textContent = "Please answer at least one question.";
     quizResultEl.style.color = "#f97373";
     return;
   }
 
-  const total = questions.length;
-  quizResultEl.textContent = `You answered ${correctCount} out of ${total} questions correctly.`;
+  quizResultEl.textContent = `You answered ${correct} out of ${total} questions correctly.`;
   quizResultEl.style.color =
-    correctCount >= Math.ceil(total * 0.7) ? "#22c55e" : "#f97373";
+    correct >= Math.ceil(total * 0.7) ? "#22c55e" : "#f97373";
+}
+
+// --------- TELEGRAM HELPERS ----------
+
+async function sendToTelegram(payload) {
+  try {
+    const response = await fetch("/api/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to send message.");
+    }
+
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, message: error.message || "Unknown error." };
+  }
+}
+
+async function handleSendQuizToTelegram() {
+  if (!currentUnit) return;
+
+  const { correct, total, answered } = calculateQuizScore();
+
+  if (answered === 0) {
+    quizSendStatusEl.textContent =
+      "Please answer at least one question and check your answers first.";
+    quizSendStatusEl.style.color = "#f97373";
+    return;
+  }
+
+  const scoreText = `${correct} / ${total} correct (answered ${answered} questions)`;
+
+  quizSendStatusEl.textContent = "Sending quiz result to teacher...";
+  quizSendStatusEl.style.color = "#9ca3af";
+
+  const payload = {
+    type: "quiz",
+    bookTitle: book.title,
+    unitTitle: currentUnit.title,
+    scoreText
+  };
+
+  const result = await sendToTelegram(payload);
+
+  if (result.ok) {
+    quizSendStatusEl.textContent = "Quiz result sent to teacher via Telegram.";
+    quizSendStatusEl.style.color = "#22c55e";
+  } else {
+    quizSendStatusEl.textContent =
+      "Could not send quiz result. Please try again later.";
+    quizSendStatusEl.style.color = "#f97373";
+  }
+}
+
+async function handleSendWritingToTelegram() {
+  if (!currentUnit) return;
+
+  const text = writingAnswerEl.value.trim();
+  if (!text) {
+    writingStatusEl.textContent = "Please write your answer before sending.";
+    writingStatusEl.style.color = "#f97373";
+    return;
+  }
+
+  writingStatusEl.textContent = "Sending writing to teacher...";
+  writingStatusEl.style.color = "#9ca3af";
+
+  const combinedMessage =
+    `✍️ Student writing answer:\n\n` +
+    `${text}`;
+
+  const payload = {
+    type: "writing",
+    bookTitle: book.title,
+    unitTitle: currentUnit.title,
+    message: combinedMessage
+  };
+
+  const result = await sendToTelegram(payload);
+
+  if (result.ok) {
+    writingStatusEl.textContent =
+      "Writing task sent to teacher via Telegram.";
+    writingStatusEl.style.color = "#22c55e";
+  } else {
+    writingStatusEl.textContent =
+      "Could not send writing. Please try again later.";
+    writingStatusEl.style.color = "#f97373";
+  }
 }

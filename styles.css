@@ -301,6 +301,10 @@ body {
   justify-content: flex-end;
 }
 
+/* ===========================
+   Buttons
+   =========================== */
+
 .primary-button {
   border-radius: 999px;
   padding: 8px 16px;
@@ -325,6 +329,24 @@ body {
 .primary-button:active {
   transform: translateY(0);
   box-shadow: 0 10px 25px rgba(15, 23, 42, 0.85);
+}
+
+.primary-button.secondary {
+  background: rgba(15, 23, 42, 0.96);
+  color: var(--accent);
+  border: 1px solid var(--accent-soft);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.9);
+}
+
+.primary-button.secondary:hover {
+  filter: none;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 /* ===========================
@@ -519,6 +541,14 @@ body {
 .quiz-result {
   margin-top: 10px;
   font-size: 0.9rem;
+}
+
+/* Status messages */
+
+.status-message {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
 }
 
 /* Question lists */
